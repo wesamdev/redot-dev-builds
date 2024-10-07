@@ -78,17 +78,17 @@ jobs:
       contents: write
 
     steps:
-      - name: Download Linux release artifact
+      - name: Download Linux dev artifact
         uses: actions/download-artifact@v4
         with:
-          name: redot-linux-release
-          path: redot-linux-release
+          name: redot-linux-dev
+          path: redot-linux-dev
 
-      - name: Download Windows release artifact
+      - name: Download Windows dev artifact
         uses: actions/download-artifact@v4
         with:
-          name: redot-windows-release
-          path: redot-windows-release
+          name: redot-windows-dev
+          path: redot-windows-dev
 
       - name: Get the current date
         id: date
