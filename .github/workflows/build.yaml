@@ -8,7 +8,7 @@ on:
       - main
 
 jobs:
-  build:
+  build-linux:
     runs-on: ubuntu-latest
 
     steps:
@@ -38,31 +38,65 @@ jobs:
           cd redot-engine
           git checkout master # Ensure you're on the correct branch
 
-      - name: Build Redot Project
+      - name: Build Redot Project for Linux
         run: |
           cd redot-engine
-          # Build the project for Linux and Windows
           scons platform=linux dev_build=yes
-          scons platform=windows dev_build=yes
 
-      - name: Upload release artifact
+      - name: Upload Linux release artifact
         uses: actions/upload-artifact@v4
         with:
-          name: redot-release
+          name: redot-linux-release
+          path: redot-engine/bin
+
+  build-windows:
+    runs-on: windows-latest
+
+    steps:
+      - name: Checkout Repository
+        uses: actions/checkout@v2
+
+      - name: Install Dependencies
+        run: |
+          choco install scons pkgconfiglite
+          choco install mingw
+          choco install python3
+
+      - name: Clone Redot Engine Source Code
+        run: |
+          git clone --depth 1 https://github.com/Redot-Engine/redot-engine.git
+          cd redot-engine
+          git checkout master # Ensure you're on the correct branch
+
+      - name: Build Redot Project for Windows
+        run: |
+          cd redot-engine
+          scons dev_build=yes
+
+      - name: Upload Windows release artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: redot-windows-release
           path: redot-engine/bin
 
   release:
-    needs: build
+    needs: [build-linux, build-windows]
     runs-on: ubuntu-latest
     permissions:
       contents: write
 
     steps:
-      - name: Download release artifact
+      - name: Download Linux release artifact
         uses: actions/download-artifact@v4
         with:
-          name: redot-release
-          path: redot-release
+          name: redot-linux-release
+          path: redot-linux-release
+
+      - name: Download Windows release artifact
+        uses: actions/download-artifact@v4
+        with:
+          name: redot-windows-release
+          path: redot-windows-release
 
       - name: Get the current date
         id: date
@@ -70,9 +104,11 @@ jobs:
 
       - name: Zip the release artifact
         run: |
-          cd redot-release
-          zip -r redot-windows.zip bin/YourWindowsExecutable.exe # Adjust with actual executable name
+          cd redot-linux-release
           zip -r redot-linux.zip bin/YourLinuxExecutable # Adjust with actual executable name
+          
+          cd ../redot-windows-release
+          zip -r redot-windows.zip bin/YourWindowsExecutable.exe # Adjust with actual executable name
 
       - name: Upload release build artifacts to GitHub Release
         uses: softprops/action-gh-release@v2
@@ -82,5 +118,5 @@ jobs:
           draft: false
           make_latest: true
           files: |
-            redot-windows.zip
-            redot-linux.zip
+            redot-linux-release/redot-linux.zip
+            redot-windows-release/redot-windows.zip
