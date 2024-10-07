@@ -37,7 +37,6 @@ jobs:
 
       - name: Build Redot Project for Linux
         run: |
-          cd redot-engine
           scons platform=linux dev_build=yes
 
       - name: Upload Linux dev artifact
@@ -64,7 +63,6 @@ jobs:
 
       - name: Build Redot Project for Windows
         run: |
-          cd redot-engine
           scons dev_build=yes
 
       - name: Upload Windows dev artifact
