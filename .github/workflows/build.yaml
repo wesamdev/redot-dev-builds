@@ -43,10 +43,10 @@ jobs:
           cd redot-engine
           scons platform=linux dev_build=yes
 
-      - name: Upload Linux release artifact
+      - name: Upload Linux dev artifact
         uses: actions/upload-artifact@v4
         with:
-          name: redot-linux-release
+          name: redot-linux-dev
           path: redot-engine/bin
 
   build-windows:
@@ -75,10 +75,10 @@ jobs:
           cd redot-engine
           scons dev_build=yes
 
-      - name: Upload Windows release artifact
+      - name: Upload Windows dev artifact
         uses: actions/upload-artifact@v4
         with:
-          name: redot-windows-release
+          name: redot-windows-dev
           path: redot-engine/bin
 
   release:
