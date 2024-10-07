@@ -13,7 +13,10 @@ jobs:
 
     steps:
       - name: Checkout Repository
-        uses: actions/checkout@v2
+        uses: actions/checkout@v3
+        with:
+          repository: Redot-Engine/redot-engine # Adjust this to the actual repo
+          ref: redot-merge
 
       - name: Install Dependencies
         run: |
@@ -32,12 +35,6 @@ jobs:
             g++ \
             python3
 
-      - name: Clone Redot Engine Source Code
-        run: |
-          git clone --depth 1 https://github.com/Redot-Engine/redot-engine.git
-          cd redot-engine
-          git checkout redot-merge # Ensure you're on the correct branch
-
       - name: Build Redot Project for Linux
         run: |
           cd redot-engine
@@ -54,21 +51,16 @@ jobs:
 
     steps:
       - name: Checkout Repository
-        uses: actions/checkout@v2
+        uses: actions/checkout@v3
+        with:
+          repository: Redot-Engine/redot-engine # Adjust this to the actual repo
+          ref: redot-merge
 
       - name: Setup Scoop
         uses: MinoruSekine/setup-scoop@v4.0.1
         with:
           buckets: extras
           apps: gcc python scons make mingw
-
-
-
-      - name: Clone Redot Engine Source Code
-        run: |
-          git clone --depth 1 https://github.com/Redot-Engine/redot-engine.git
-          cd redot-engine
-          git checkout redot-merge # Ensure you're on the correct branch
 
       - name: Build Redot Project for Windows
         run: |
@@ -107,10 +99,10 @@ jobs:
       - name: Zip the release artifact
         run: |
           cd redot-linux-release
-          zip -r redot-linux.zip bin/YourLinuxExecutable # Adjust with actual executable name
+          zip -r redot-linux.zip bin
           
           cd ../redot-windows-release
-          zip -r redot-windows.zip bin/YourWindowsExecutable.exe # Adjust with actual executable name
+          zip -r redot-windows.zip bin
 
       - name: Upload release build artifacts to GitHub Release
         uses: softprops/action-gh-release@v2
