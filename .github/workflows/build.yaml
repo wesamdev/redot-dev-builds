@@ -37,7 +37,7 @@ jobs:
 
       - name: Build Redot Project for Linux
         run: |
-          scons platform=linux dev_build=yes
+          scons platform=linux
 
       - name: Upload Linux dev artifact
         uses: actions/upload-artifact@v4
@@ -63,7 +63,7 @@ jobs:
 
       - name: Build Redot Project for Windows
         run: |
-          scons dev_build=yes
+          scons
 
       - name: Upload Windows dev artifact
         uses: actions/upload-artifact@v4
@@ -96,11 +96,9 @@ jobs:
 
       - name: Zip the dev artifact
         run: |
-          cd redot-linux-dev
-          zip -r redot-linux.zip bin
+          zip -r redot-linuxbsd.zip redot-linux-dev/*
           
-          cd ../redot-windows-dev
-          zip -r redot-windows.zip bin
+          zip -r redot-windowsx64.zip redot-windows-dev/*
 
       - name: Upload dev build artifacts to GitHub dev
         uses: softprops/action-gh-release@v2
