@@ -43,7 +43,7 @@ jobs:
         uses: actions/upload-artifact@v4
         with:
           name: redot-linux-dev
-          path: redot-engine/bin
+          path: bin
 
   build-windows:
     runs-on: windows-latest
@@ -69,7 +69,7 @@ jobs:
         uses: actions/upload-artifact@v4
         with:
           name: redot-windows-dev
-          path: redot-engine/bin
+          path: bin
 
   release:
     needs: [build-linux, build-windows]
