@@ -94,7 +94,7 @@ jobs:
         id: date
         run: echo "CURRENT_DATE=$(date +'%Y%m%d%H')" >> $GITHUB_ENV
 
-      - name: Zip the release artifact
+      - name: Zip the dev artifact
         run: |
           cd redot-linux-dev
           zip -r redot-linux.zip bin
