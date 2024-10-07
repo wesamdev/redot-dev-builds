@@ -1,0 +1,59 @@
+name: Build Redot Project
+
+on:
+  push:
+    branches:
+      - master
+  release:
+    types: [created]
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout Repository
+        uses: actions/checkout@v2
+
+      - name: Install Dependencies
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y \
+            scons \
+            pkg-config \
+            libx11-dev \
+            libxcursor-dev \
+            libxrandr-dev \
+            libxi-dev \
+            libgl1-mesa-dev \
+            libglu1-mesa-dev \
+            build-essential \
+            gcc \
+            g++ \
+            python3
+
+      - name: Clone Redot Engine Source Code
+        run: |
+          git clone --depth 1 https://github.com/Redot-Engine/redot-engine.git
+          cd redot-engine
+          git checkout master # Ensure you're on the correct branch
+
+      - name: Build Redot Project
+        run: |
+          cd redot-engine
+          # Build the project for Linux and Windows
+          scons platform=linux target=release
+          scons platform=windows target=release
+
+
+      - name: Upload Artifacts
+        uses: actions/upload-artifact@v2
+        with:
+          name: redot-artifacts
+          path: redot-engine/build/*
+
+      - name: Create Release
+        if: github.event_name == 'release'
+        run: |
+          echo "Release created: ${{ github.ref }}"
+          # You can add any custom scripts here to handle release creation if needed
