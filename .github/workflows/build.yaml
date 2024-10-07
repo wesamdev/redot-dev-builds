@@ -56,10 +56,14 @@ jobs:
       - name: Checkout Repository
         uses: actions/checkout@v2
 
+      - name: Install Scoop
+        run: |
+          Set-ExecutionPolicy RemoteSigned -Scope CurrentUser -Force
+          iwr get.scoop.sh -useb | iex
+
       - name: Install Dependencies
         run: |
           scoop install gcc python scons make mingw
-
 
       - name: Clone Redot Engine Source Code
         run: |
