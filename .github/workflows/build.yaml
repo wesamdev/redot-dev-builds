@@ -56,14 +56,13 @@ jobs:
       - name: Checkout Repository
         uses: actions/checkout@v2
 
-      - name: Install Scoop
-        run: |
-          Set-ExecutionPolicy RemoteSigned -Scope CurrentUser -Force
-          iwr get.scoop.sh -useb | iex
+      - name: Setup Scoop
+        uses: MinoruSekine/setup-scoop@v4.0.1
+        with:
+          buckets: extras
+          apps: gcc python scons make mingw
 
-      - name: Install Dependencies
-        run: |
-          scoop install gcc python scons make mingw
+
 
       - name: Clone Redot Engine Source Code
         run: |
