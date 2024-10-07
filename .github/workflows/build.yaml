@@ -96,19 +96,19 @@ jobs:
 
       - name: Zip the release artifact
         run: |
-          cd redot-linux-release
+          cd redot-linux-dev
           zip -r redot-linux.zip bin
           
-          cd ../redot-windows-release
+          cd ../redot-windows-dev
           zip -r redot-windows.zip bin
 
-      - name: Upload release build artifacts to GitHub Release
+      - name: Upload dev build artifacts to GitHub dev
         uses: softprops/action-gh-release@v2
         with:
           tag_name: ${{ env.CURRENT_DATE }}
-          name: Release ${{ env.CURRENT_DATE }}
+          name: Build ${{ env.CURRENT_DATE }}
           draft: false
           make_latest: true
           files: |
-            redot-linux-release/redot-linux.zip
-            redot-windows-release/redot-windows.zip
+            redot-linux-dev/redot-linux.zip
+            redot-windows-dev/redot-windows.zip
