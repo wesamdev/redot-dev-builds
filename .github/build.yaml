@@ -1,11 +1,12 @@
 name: Build Redot Project
 
 on:
+  schedule:
+    - cron: "0 * * * *" # Runs every hour at the start of the hour
   push:
     branches:
-      - master
-  release:
-    types: [created]
+      - main
+
 
 jobs:
   build:
@@ -42,8 +43,8 @@ jobs:
         run: |
           cd redot-engine
           # Build the project for Linux and Windows
-          scons platform=linux target=release
-          scons platform=windows target=release
+          scons platform=linux dev_build=yes
+          scons platform=windows dev_build=yes
 
 
       - name: Upload Artifacts
