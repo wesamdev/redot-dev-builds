@@ -7,7 +7,6 @@ on:
     branches:
       - main
 
-
 jobs:
   build:
     runs-on: ubuntu-latest
@@ -46,15 +45,42 @@ jobs:
           scons platform=linux dev_build=yes
           scons platform=windows dev_build=yes
 
-
-      - name: Upload Artifacts
-        uses: actions/upload-artifact@v2
+      - name: Upload release artifact
+        uses: actions/upload-artifact@v4
         with:
-          name: redot-artifacts
-          path: redot-engine/build/*
+          name: redot-release
+          path: redot-engine/bin
 
-      - name: Create Release
-        if: github.event_name == 'release'
+  release:
+    needs: build
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+
+    steps:
+      - name: Download release artifact
+        uses: actions/download-artifact@v4
+        with:
+          name: redot-release
+          path: redot-release
+
+      - name: Get the current date
+        id: date
+        run: echo "CURRENT_DATE=$(date +'%Y%m%d%H')" >> $GITHUB_ENV
+
+      - name: Zip the release artifact
         run: |
-          echo "Release created: ${{ github.ref }}"
-          # You can add any custom scripts here to handle release creation if needed
+          cd redot-release
+          zip -r redot-windows.zip bin/YourWindowsExecutable.exe # Adjust with actual executable name
+          zip -r redot-linux.zip bin/YourLinuxExecutable # Adjust with actual executable name
+
+      - name: Upload release build artifacts to GitHub Release
+        uses: softprops/action-gh-release@v2
+        with:
+          tag_name: ${{ env.CURRENT_DATE }}
+          name: Release ${{ env.CURRENT_DATE }}
+          draft: false
+          make_latest: true
+          files: |
+            redot-windows.zip
+            redot-linux.zip
