@@ -58,9 +58,8 @@ jobs:
 
       - name: Install Dependencies
         run: |
-          choco install scons pkgconfiglite
-          choco install mingw
-          choco install python3
+          scoop install gcc python scons make mingw
+
 
       - name: Clone Redot Engine Source Code
         run: |
