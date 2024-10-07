@@ -36,7 +36,7 @@ jobs:
         run: |
           git clone --depth 1 https://github.com/Redot-Engine/redot-engine.git
           cd redot-engine
-          git checkout master # Ensure you're on the correct branch
+          git checkout redot-merge # Ensure you're on the correct branch
 
       - name: Build Redot Project for Linux
         run: |
@@ -68,7 +68,7 @@ jobs:
         run: |
           git clone --depth 1 https://github.com/Redot-Engine/redot-engine.git
           cd redot-engine
-          git checkout master # Ensure you're on the correct branch
+          git checkout redot-merge # Ensure you're on the correct branch
 
       - name: Build Redot Project for Windows
         run: |
