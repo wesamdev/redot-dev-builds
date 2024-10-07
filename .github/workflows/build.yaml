@@ -108,5 +108,5 @@ jobs:
           draft: false
           make_latest: true
           files: |
-            redot-linux-dev/redot-linux.zip
-            redot-windows-dev/redot-windows.zip
+            redot-linux-dev/redot-linuxbsd.zip
+            redot-windows-dev/redot-windowsx64.zip
