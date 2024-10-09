@@ -45,6 +45,43 @@ jobs:
           name: redot-linux-dev
           path: bin
 
+  build-linux-template:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout Repository
+        uses: actions/checkout@v3
+        with:
+          repository: Redot-Engine/redot-engine
+          ref: redot-merge-code
+
+      - name: Install Dependencies
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y \
+            scons \
+            pkg-config \
+            libx11-dev \
+            libxcursor-dev \
+            libxrandr-dev \
+            libxi-dev \
+            libgl1-mesa-dev \
+            libglu1-mesa-dev \
+            build-essential \
+            gcc \
+            g++ \
+            python3
+
+      - name: Build Redot Templates for Linux
+        run: |
+          scons platform=linux template=release
+
+      - name: Upload Linux Template Artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: redot-linux-template
+          path: bin
+
   build-windows:
     runs-on: windows-latest
 
@@ -52,7 +89,7 @@ jobs:
       - name: Checkout Repository
         uses: actions/checkout@v3
         with:
-          repository: Redot-Engine/redot-engine # Adjust this to the actual repo
+          repository: Redot-Engine/redot-engine
           ref: redot-merge-code
 
       - name: Setup Scoop
@@ -71,8 +108,34 @@ jobs:
           name: redot-windows-dev
           path: bin
 
+  build-windows-template:
+    runs-on: windows-latest
+
+    steps:
+      - name: Checkout Repository
+        uses: actions/checkout@v3
+        with:
+          repository: Redot-Engine/redot-engine
+          ref: redot-merge-code
+
+      - name: Setup Scoop
+        uses: MinoruSekine/setup-scoop@v4.0.1
+        with:
+          buckets: extras
+          apps: gcc python scons make mingw
+
+      - name: Build Redot Templates for Windows
+        run: |
+          scons template=release
+
+      - name: Upload Windows Template Artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: redot-windows-template
+          path: bin
+
   release:
-    needs: [build-linux, build-windows]
+    needs: [build-linux, build-windows, build-linux-template, build-windows-template]
     runs-on: ubuntu-latest
     permissions:
       contents: write
@@ -90,6 +153,18 @@ jobs:
           name: redot-windows-dev
           path: redot-windows-dev
 
+      - name: Download Linux template artifact
+        uses: actions/download-artifact@v4
+        with:
+          name: redot-linux-template
+          path: redot-linux-template
+
+      - name: Download Windows template artifact
+        uses: actions/download-artifact@v4
+        with:
+          name: redot-windows-template
+          path: redot-windows-template
+
       - name: Get the current date
         id: date
         run: echo "CURRENT_DATE=$(date +'%Y%m%d%H')" >> $GITHUB_ENV
@@ -97,8 +172,9 @@ jobs:
       - name: Zip the dev artifact
         run: |
           zip -r redot-linuxbsd.zip redot-linux-dev/*
-          
           zip -r redot-windowsx64.zip redot-windows-dev/*
+          zip -r redot-linux-template.zip redot-linux-template/*
+          zip -r redot-windows-template.zip redot-windows-template/*
 
       - name: Upload dev build artifacts to GitHub dev
         uses: softprops/action-gh-release@v2
@@ -110,3 +186,5 @@ jobs:
           files: |
             redot-linuxbsd.zip
             redot-windowsx64.zip
+            redot-linux-template.zip
+            redot-windows-template.zip
