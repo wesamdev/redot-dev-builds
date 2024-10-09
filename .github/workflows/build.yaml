@@ -37,7 +37,7 @@ jobs:
 
       - name: Build Redot Project for Linux
         run: |
-          scons platform=linux
+          scons platform=linuxbsd
 
       - name: Upload Linux dev artifact
         uses: actions/upload-artifact@v4
@@ -74,7 +74,7 @@ jobs:
 
       - name: Build Redot Templates for Linux
         run: |
-          scons platform=linux template=release
+          scons platform=linuxbsd target=template_release
 
       - name: Upload Linux Template Artifact
         uses: actions/upload-artifact@v4
@@ -100,7 +100,7 @@ jobs:
 
       - name: Build Redot Project for Windows
         run: |
-          scons
+          scons platform=windows
 
       - name: Upload Windows dev artifact
         uses: actions/upload-artifact@v4
@@ -126,7 +126,7 @@ jobs:
 
       - name: Build Redot Templates for Windows
         run: |
-          scons template=release
+          scons platform=windows target=template_release
 
       - name: Upload Windows Template Artifact
         uses: actions/upload-artifact@v4
@@ -134,8 +134,104 @@ jobs:
           name: redot-windows-template
           path: bin
 
+  build-macos-x64:
+    runs-on: macos-latest
+
+    steps:
+      - name: Checkout Repository
+        uses: actions/checkout@v3
+        with:
+          repository: Redot-Engine/redot-engine
+          ref: redot-merge-code
+
+      - name: Install Dependencies
+        run: |
+          brew install scons pkg-config
+
+      - name: Build Redot Project for macOS x64
+        run: |
+          scons platform=macos arch=x64
+
+      - name: Upload macOS x64 dev artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: redot-macos-x64-dev
+          path: bin
+
+  build-macos-arm64:
+    runs-on: macos-latest
+
+    steps:
+      - name: Checkout Repository
+        uses: actions/checkout@v3
+        with:
+          repository: Redot-Engine/redot-engine
+          ref: redot-merge-code
+
+      - name: Install Dependencies
+        run: |
+          brew install scons pkg-config
+
+      - name: Build Redot Project for macOS arm64
+        run: |
+          scons platform=macos arch=arm64
+
+      - name: Upload macOS arm64 dev artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: redot-macos-arm64-dev
+          path: bin
+
+  build-macos-x64-template:
+    runs-on: macos-latest
+
+    steps:
+      - name: Checkout Repository
+        uses: actions/checkout@v3
+        with:
+          repository: Redot-Engine/redot-engine
+          ref: redot-merge-code
+
+      - name: Install Dependencies
+        run: |
+          brew install scons pkg-config
+
+      - name: Build Redot Templates for macOS x64
+        run: |
+          scons platform=macos arch=x64 target=template_release
+
+      - name: Upload macOS x64 Template Artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: redot-macos-x64-template
+          path: bin
+
+  build-macos-arm64-template:
+    runs-on: macos-latest
+
+    steps:
+      - name: Checkout Repository
+        uses: actions/checkout@v3
+        with:
+          repository: Redot-Engine/redot-engine
+          ref: redot-merge-code
+
+      - name: Install Dependencies
+        run: |
+          brew install scons pkg-config
+
+      - name: Build Redot Templates for macOS arm64
+        run: |
+          scons platform=macos arch=arm64 target=template_release
+
+      - name: Upload macOS arm64 Template Artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: redot-macos-arm64-template
+          path: bin
+
   release:
-    needs: [build-linux, build-windows, build-linux-template, build-windows-template]
+    needs: [build-linux, build-windows, build-linux-template, build-windows-template, build-macos-x64, build-macos-arm64, build-macos-x64-template, build-macos-arm64-template]
     runs-on: ubuntu-latest
     permissions:
       contents: write
@@ -165,6 +261,30 @@ jobs:
           name: redot-windows-template
           path: redot-windows-template
 
+      - name: Download macOS x64 dev artifact
+        uses: actions/download-artifact@v4
+        with:
+          name: redot-macos-x64-dev
+          path: redot-macos-x64-dev
+
+      - name: Download macOS arm64 dev artifact
+        uses: actions/download-artifact@v4
+        with:
+          name: redot-macos-arm64-dev
+          path: redot-macos-arm64-dev
+
+      - name: Download macOS x64 template artifact
+        uses: actions/download-artifact@v4
+        with:
+          name: redot-macos-x64-template
+          path: redot-macos-x64-template
+
+      - name: Download macOS arm64 template artifact
+        uses: actions/download-artifact@v4
+        with:
+          name: redot-macos-arm64-template
+          path: redot-macos-arm64-template
+
       - name: Get the current date
         id: date
         run: echo "CURRENT_DATE=$(date +'%Y%m%d%H')" >> $GITHUB_ENV
@@ -173,18 +293,23 @@ jobs:
         run: |
           zip -r redot-linuxbsd.zip redot-linux-dev/*
           zip -r redot-windowsx64.zip redot-windows-dev/*
+          zip -r redot-macos-x64.zip redot-macos-x64-dev/*
+          zip -r redot-macos-arm64.zip redot-macos-arm64-dev/*
           zip -r redot-linux-template.zip redot-linux-template/*
           zip -r redot-windows-template.zip redot-windows-template/*
+          zip -r redot-macos-x64-template.zip redot-macos-x64-template/*
+          zip -r redot-macos-arm64-template.zip redot-macos-arm64-template/*
 
-      - name: Upload dev build artifacts to GitHub dev
-        uses: softprops/action-gh-release@v2
+      - name: Upload release artifacts
+        uses: actions/upload-artifact@v4
         with:
-          tag_name: ${{ env.CURRENT_DATE }}
-          name: Build ${{ env.CURRENT_DATE }}
-          draft: false
-          make_latest: true
-          files: |
+          name: redot-release-${{ env.CURRENT_DATE }}
+          path: |
             redot-linuxbsd.zip
             redot-windowsx64.zip
+            redot-macos-x64.zip
+            redot-macos-arm64.zip
             redot-linux-template.zip
             redot-windows-template.zip
+            redot-macos-x64-template.zip
+            redot-macos-arm64-template.zip
