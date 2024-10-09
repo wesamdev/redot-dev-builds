@@ -143,7 +143,9 @@ jobs:
         with:
           repository: Redot-Engine/redot-engine
           ref: redot-merge-code
-
+      - name: Setup Vulkan SDK
+        run: |
+          sh misc/scripts/install_vulkan_sdk_macos.sh
       - name: Install Dependencies
         run: |
           brew install scons pkg-config
@@ -168,6 +170,9 @@ jobs:
           repository: Redot-Engine/redot-engine
           ref: redot-merge-code
 
+      - name: Setup Vulkan SDK
+        run: |
+          sh misc/scripts/install_vulkan_sdk_macos.sh
       - name: Install Dependencies
         run: |
           brew install scons pkg-config
@@ -191,7 +196,9 @@ jobs:
         with:
           repository: Redot-Engine/redot-engine
           ref: redot-merge-code
-
+      - name: Setup Vulkan SDK
+        run: |
+          sh misc/scripts/install_vulkan_sdk_macos.sh
       - name: Install Dependencies
         run: |
           brew install scons pkg-config
@@ -215,7 +222,9 @@ jobs:
         with:
           repository: Redot-Engine/redot-engine
           ref: redot-merge-code
-
+      - name: Setup Vulkan SDK
+        run: |
+          sh misc/scripts/install_vulkan_sdk_macos.sh
       - name: Install Dependencies
         run: |
           brew install scons pkg-config
