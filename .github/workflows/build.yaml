@@ -309,11 +309,28 @@ jobs:
           zip -r redot-macos-x64-template.zip redot-macos-x64-template/*
           zip -r redot-macos-arm64-template.zip redot-macos-arm64-template/*
 
-      - name: Upload release artifacts
-        uses: actions/upload-artifact@v4
+      # - name: Upload release artifacts
+      #   uses: actions/upload-artifact@v4
+      #   with:
+      #     name: redot-release-${{ env.CURRENT_DATE }}
+      #     path: |
+      #       redot-linuxbsd.zip
+      #       redot-windowsx64.zip
+      #       redot-macos-x64.zip
+      #       redot-macos-arm64.zip
+      #       redot-linux-template.zip
+      #       redot-windows-template.zip
+      #       redot-macos-x64-template.zip
+      #       redot-macos-arm64-template.zip
+
+      - name: Upload dev build artifacts to GitHub dev
+        uses: softprops/action-gh-release@v2
         with:
-          name: redot-release-${{ env.CURRENT_DATE }}
-          path: |
+          tag_name: ${{ env.CURRENT_DATE }}
+          name: Build ${{ env.CURRENT_DATE }}
+          draft: false
+          make_latest: true
+          files: |
             redot-linuxbsd.zip
             redot-windowsx64.zip
             redot-macos-x64.zip
