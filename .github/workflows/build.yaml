@@ -1,8 +1,7 @@
 name: Build Redot Project
 
 on:
-  schedule:
-    - cron: "*/50 * * * *" # Runs every 50 minutes
+
   push:
     branches:
       - main
